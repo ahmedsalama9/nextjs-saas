@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model
+model User {
+  id                     String   @id @default(cuid()) @unique
+  email                  String   @unique
+  files                  File[]   // relation to File
+
+  stripeCustomerId       String?  @unique @map("stripe_customer_id")
+  stripeSubscriptionId   String?  @unique @map("stripe_subscription_id")
+  stripePriceId          String?  @map("stripe_price_id")
+  stripeCurrentPeriodEnd DateTime? @map("stripe_current_period_end")
+}
+
+// File model
+model File {
+  id           String        @id @default(cuid()) @unique
+  name         String
+  uploadStatus UploadStatus  @default(PENDING)
+  url          String
+  key          String
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  // relation back to user
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+}
+
+// Enum
+enum UploadStatus {
+  PENDING
+  PROCESSING
+  FAILED
+  SUCCESS
+}
