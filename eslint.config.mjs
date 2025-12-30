@@ -18,7 +18,9 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
-      "src/generated/**",
+      "src/generated/**",   // Prisma generated code
+      "public/**",          // If you have minified JS
+      "**/*.min.js",        // Any minified JS
     ],
   },
 ];
